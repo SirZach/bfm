@@ -1,6 +1,11 @@
 {
   "name": "bfm",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
-    "express": "^4.12.2"
+    "express": "^4.12.2",
+    "cors": "^2.5.3",
+    "lodash": "^3.5.0"
   }
 }
