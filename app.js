@@ -1,18 +1,22 @@
 var express = require('express');
 var app = express();
+var fs = require('fs');
 var http = require('http');
 var cors = require('cors');
 var server = '';
 var CardsRoute = require('./routes/cards');
 var PricesRoute = require('./routes/prices');
 var httpResponseHandler = require('./utils/http-response');
-var nonCardsDevMode = false;
 
 app.use(cors());
 
-if (nonCardsDevMode) {
-  PricesRoute(app);
-  server = startApp(app);
+if (process.env.DEV_MODE) {
+  console.log('in development mode');
+  useMtgJsonStub(function (cards) {
+    CardsRoute(app, cards);
+    PricesRoute(app);
+    server = startApp(app);
+  });
 } else {
   contactMtgJson(function (cards) {
     CardsRoute(app, cards);
@@ -36,5 +40,13 @@ function contactMtgJson (cb) {
   }, httpResponseHandler.bind(this, cb))
   .on('error', function (err) {
     console.error('Error with request: ' + err.message);
+  });
+}
+
+function useMtgJsonStub (cb) {
+  fs.readFile(__dirname + '/stubs/AllCards-x.json', function (err, data) {
+    if (err) throw err;
+    var parsed = JSON.parse(data);
+    cb(parsed);
   });
 }

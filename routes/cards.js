@@ -4,7 +4,11 @@ var CARDS = [];
 
 module.exports = function (app, cards) {
   CARDS = _.keys(cards).map(function (key) {
-    return cards[key];
+    var card = cards[key];
+    if (card.manaCost) {
+      card.manaCost = card.manaCost.split('{').join('').split('}').join('');
+    }
+    return card;
   });
   var router = express.Router();
   
@@ -12,7 +16,7 @@ module.exports = function (app, cards) {
     .get('/', function (req, res) {
       var query = req.query;
       var page = query.page || 0;
-      var nameSearch = query.nameSearch || '';
+      var nameSearch = query.nameSearch || ''; 
       
       var matchedCards = _.filter(CARDS, function (card) {
         if (nameSearch) {

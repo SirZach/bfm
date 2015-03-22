@@ -1,7 +1,8 @@
 {
   "name": "bfm",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "DEV_MODE=true node app.js"
   },
   "dependencies": {
     "express": "^4.12.2",
