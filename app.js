@@ -6,7 +6,7 @@ var server = '';
 var CardsRoute = require('./routes/cards');
 var PricesRoute = require('./routes/prices');
 var httpResponseHandler = require('./utils/http-response');
-var nonCardsDevMode = true;
+var nonCardsDevMode = false;
 
 app.use(cors());
 
