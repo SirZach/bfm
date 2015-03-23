@@ -4,11 +4,7 @@ var CARDS = [];
 
 module.exports = function (app, cards) {
   CARDS = _.keys(cards).map(function (key) {
-    var card = cards[key];
-    if (card.manaCost) {
-      card.manaCost = card.manaCost.split('{').join('').split('}').join('');
-    }
-    return card;
+    return massageCard(cards[key]);
   });
   var router = express.Router();
   
@@ -38,3 +34,26 @@ module.exports = function (app, cards) {
 
   app.use('/cards', router);
 };
+
+function massageCard (card) {
+  var types = card.types;
+  var power = card.power;
+  var toughness = card.toughness;
+  var legalities = card.legalities || {};
+
+  card.isStandard = legalities.Standard === 'Legal' ? true : false;
+  card.isModern = legalities.Modern === 'Legal' ? true : false;
+  card.isLegacy = legalities.Legacy === 'Legal' ? true : false;
+  card.isVintage = legalities.Vintage === 'Legal' ? true : false;
+
+  if (card.manaCost) {
+    card.manaCostFormatted = card.manaCost.split('{').join('').split('}').join('');
+  }
+  card.recentSet = card.printings[card.printings.length -1];
+  card.powerToughnessFormatted = !power && !toughness ? '' : power + '/' + toughness;
+  card.mainType = typeof(types) === 'undefined' ? '' : !types.length ? '' : types[0];
+
+   
+  return card;
+}
+
