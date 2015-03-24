@@ -13,14 +13,60 @@ module.exports = function (app, cards) {
       var query = req.query;
       var page = query.page || 0;
       var nameSearch = query.nameSearch || ''; 
+      var types = query.types || '';
+      var legalities = query.legalities || '';
+      var colors = query.colors || '';
+      var matchedCards = CARDS;
       
-      var matchedCards = _.filter(CARDS, function (card) {
-        if (nameSearch) {
+      if (nameSearch) {
+        matchedCards = _.filter(CARDS, function (card) {
           return card.name.toLowerCase().indexOf(nameSearch.toLowerCase()) > -1;
-        } else {
-          return true;
+        });
+      }
+
+      if (types) {
+        if (!_.isArray(types)) {
+          types = [types];
         }
-      });
+        matchedCards = _.filter(matchedCards, function (card) {
+          return _.contains(types, card.mainType);
+        });
+      }
+
+      if (colors) {
+        if (!_.isArray(colors)) {
+          colors = [colors];
+        }
+        matchedCards = _.filter(matchedCards, function (card) {
+          var found = false;
+          var cardColors = card.colors;
+
+          if (!colors) {
+            return false;
+          }
+
+          return _.intersection(colors, cardColors).length;
+        });
+      }
+
+      if (legalities) {
+        if (!_.isArray(legalities)) {
+          legalities = ['is' + legalities];
+        } else {
+          legalities = legalities.map(function (l) {
+            return 'is' + l;
+          });
+        }
+        
+        matchedCards = _.filter(matchedCards, function (card) {
+          var isLegal = false;
+          legalities.forEach(function (l) {
+            if (card[l]) { isLegal = true;}
+          });
+          
+          return isLegal;
+        });
+      }
       
       res.send(matchedCards.slice(page * 20, page * 20 + 20));
     })
