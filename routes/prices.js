@@ -1,6 +1,8 @@
 var express = require('express');
-var httpResponseHandler = require('../utils/http-response');
-var http = require('http');
+var httpClient = require('../utils/http-client');
+
+var BASE_CARD_URL = 'http://magictcgprices.appspot.com' +
+  '/api/cfb/price.json?cardname=';
 
 module.exports = function (app) {
   var router = express.Router();
@@ -8,20 +10,15 @@ module.exports = function (app) {
   router.get('/:name', function (req, res) {
     var cardName = encodeURIComponent(req.params.name);
     console.log('fetching price for ' + cardName);
-    contactMtgPrices(cardName, function (response) {
-      res.send(response[0]);
-    });
+    httpClient.getJSON(BASE_CARD_URL + cardName).then(
+      function (prices) {
+        res.send(prices[0]);
+      },
+      function (err) {
+        console.error('Error retrieving card price: ' + err);
+        res.status(500).send(err);
+      });
   });
 
   app.use('/prices', router);
 };
-
-function contactMtgPrices (cardName, cb) {
-  http.get({
-    host: "magictcgprices.appspot.com",
-    path: "/api/cfb/price.json?cardname=" + cardName
-  }, httpResponseHandler.bind(this, cb))
-  .on('error', function (err) {
-    console.error('Error with request: ' + err.message);
-  });
-}
