@@ -68,13 +68,13 @@ module.exports = function (app, cards) {
         });
       }
       
-      res.send(matchedCards.slice(page * 20, page * 20 + 20));
+      res.send({"cards": matchedCards.slice(page * 20, page * 20 + 20)});
     })
     .get('/:name', function (req, res) {
       var cardName = req.params.name;
       var card = _.find(CARDS, 'name', cardName);
 
-      res.send(card);
+      res.send({"card": card});
     });
 
 
@@ -94,11 +94,14 @@ function massageCard (card) {
 
   if (card.manaCost) {
     card.manaCostFormatted = card.manaCost.split('{').join('').split('}').join('');
+  } else {
+    card.manaCostFormatted = '';
   }
   card.recentSet = card.printings[card.printings.length -1];
   card.powerToughnessFormatted = !power && !toughness ? '' : power + '/' + toughness;
   card.mainType = typeof(types) === 'undefined' ? '' : !types.length ? '' : types[0];
 
+  card.id = card.name;
    
   return card;
 }
