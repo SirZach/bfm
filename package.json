@@ -1,7 +1,7 @@
 {
   "name": "bfm",
   "scripts": {
-    "start": "PORT=80 node app.js",
+    "start": "node app.js",
     "dev": "DEV_MODE=true nodemon app.js"
   },
   "dependencies": {
