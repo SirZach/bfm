@@ -8,17 +8,11 @@ var RSVP = require('rsvp');
  *
  * @return {Promise}  Resolves with the response body, rejects with the error.
  */
-function getJSON(url) {
+function get(url) {
   var deferred = RSVP.defer();
-  var parsedJSON;
   request(url, function (err, res, body) {
     if (!err && res.statusCode === 200) {
-      try {
-        parsedJSON = JSON.parse(body);
-        deferred.resolve(parsedJSON);
-      } catch (err) {
-        deferred.reject(new Error('Error parsing JSON response: ' + body));
-      }
+      deferred.resolve(body);
     } else {
       deferred.reject(err);
     }
@@ -26,6 +20,26 @@ function getJSON(url) {
   return deferred.promise;
 }
 
+/**
+ * Make an HTTP GET request and parse as JSON.
+ *
+ * @param {String} url  The full url of the request.
+ *
+ * @return {Promise}  Resolves with the parsed object, rejects with the error.
+ */
+function getJSON(url) {
+  return get(url).then(function (body) {
+    var obj;
+    try {
+      obj = JSON.parse(body);
+    } catch (err) {
+      throw new Error('Error parsing JSON response: ' + body);
+    }
+    return obj;
+  });
+}
+
 module.exports = {
+  get: get,
   getJSON: getJSON
 };

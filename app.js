@@ -6,15 +6,20 @@ var cors = require('cors');
 var RSVP = require('rsvp');
 var server = '';
 var CardsRoute = require('./routes/cards');
+var ImagesRoute = require('./routes/images');
 var PricesRoute = require('./routes/prices');
+var StaticRoute = require('./routes/static');
 var httpClient = require('./utils/http-client');
+
 
 app.use(cors());
 
 retrieveCards().then(
   function (cards) {
     CardsRoute(app, cards);
+    ImagesRoute(app);
     PricesRoute(app);
+    StaticRoute(app);
     server = startApp(app);
   },
   function (err) {
