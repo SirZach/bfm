@@ -23,7 +23,7 @@ retrieveCards().then(
   });
 
 function startApp (app) {
-  return app.listen(3000, function () {
+  return app.listen(process.env.PORT || 3000, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('BFM listening at http://' + host + ':' + port);
