@@ -13,6 +13,11 @@ module.exports = function (app) {
 
   // Handler for /images/:name
   router.get('/:name', function (req, res) {
+    //short-circuting for development mode to always use the default card
+    if (process.env.DEV_MODE) {
+      return res.sendFile(DEFAULT_CARD_PATH);
+    }
+
     var cardName = encodeURIComponent(req.params.name);
     console.log('fetching image for ' + cardName);
     httpClient.get(BASE_QUERY_URL + cardName).then(
