@@ -12,7 +12,7 @@ module.exports = function (app) {
     console.log('fetching price for ' + cardName);
     httpClient.getJSON(BASE_CARD_URL + cardName).then(
       function (prices) {
-        res.send(prices[0]);
+        res.send({price: prices[0]});
       },
       function (err) {
         console.error('Error retrieving card price: ' + err);
