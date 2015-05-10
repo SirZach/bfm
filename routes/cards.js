@@ -57,22 +57,25 @@ module.exports = function (app, cards) {
             return 'is' + l;
           });
         }
-        
+
         matchedCards = _.filter(matchedCards, function (card) {
           var isLegal = false;
           legalities.forEach(function (l) {
             if (card[l]) { isLegal = true;}
           });
-          
+
           return isLegal;
         });
       }
-      
+
       res.send({"cards": matchedCards.slice(page * 20, page * 20 + 20)});
     })
     .get('/:name', function (req, res) {
       var cardName = req.params.name;
-      var card = _.find(CARDS, 'name', cardName);
+      var card = _.find(CARDS, function (card) {
+        return card.name.toLowerCase() === cardName.toLowerCase();
+      });
+      card.id = cardName;
 
       res.send({"card": card});
     });
@@ -102,7 +105,6 @@ function massageCard (card) {
   card.mainType = typeof(types) === 'undefined' ? '' : !types.length ? '' : types[0];
 
   card.id = card.name;
-   
+
   return card;
 }
-
