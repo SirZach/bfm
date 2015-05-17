@@ -7,17 +7,18 @@ module.exports = function (app, cards) {
     return massageCard(cards[key]);
   });
   var router = express.Router();
-  
+
   router
     .get('/', function (req, res) {
       var query = req.query;
-      var page = query.page || 0;
-      var nameSearch = query.nameSearch || ''; 
+      var page = Number(query.page || 1) - 1;
+      var perPage = Number(query.per_page || 20);
+      var nameSearch = query.nameSearch || '';
       var types = query.types || '';
       var legalities = query.legalities || '';
       var colors = query.colors || '';
       var matchedCards = CARDS;
-      
+
       if (nameSearch) {
         matchedCards = _.filter(CARDS, function (card) {
           return card.name.toLowerCase().indexOf(nameSearch.toLowerCase()) > -1;
@@ -68,7 +69,14 @@ module.exports = function (app, cards) {
         });
       }
 
-      res.send({"cards": matchedCards.slice(page * 20, page * 20 + 20)});
+      var totalPages = Math.ceil(matchedCards.length / perPage);
+      var payload = {
+        cards: matchedCards.slice(page * perPage, page * perPage + perPage),
+        meta: {
+          total_pages: totalPages
+        }
+      };
+      res.send(payload);
     })
     .get('/:name', function (req, res) {
       var cardName = req.params.name;
