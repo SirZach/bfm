@@ -96,12 +96,33 @@ function massageCard (card) {
   var types = card.types;
   var power = card.power;
   var toughness = card.toughness;
-  var legalities = card.legalities || {};
+  var legalities = card.legalities || [];
 
-  card.isStandard = legalities.Standard === 'Legal' ? true : false;
-  card.isModern = legalities.Modern === 'Legal' ? true : false;
-  card.isLegacy = legalities.Legacy === 'Legal' ? true : false;
-  card.isVintage = legalities.Vintage === 'Legal' ? true : false;
+  card.isStandard = false;
+  card.isModern = false;
+  card.isLegacy = false;
+  card.isVintage = false;
+
+  legalities.forEach(function (legality) {
+    var format = legality.format;
+    var legality = legality.legality;
+
+    if (format === 'Standard') {
+      card.isStandard = legality === 'Legal' ? true : false;
+    }
+
+    if (format === 'Modern') {
+      card.isModern = legality === 'Legal' ? true : false;
+    }
+
+    if (format === 'Legacy') {
+      card.isLegacy = legality === 'Legal' ? true : false;
+    }
+
+    if (format === 'Vintage') {
+      card.isVintage = legality === 'Legal' ? true : false;
+    }
+  });
 
   if (card.manaCost) {
     card.manaCostFormatted = card.manaCost.split('{').join('').split('}').join('');
