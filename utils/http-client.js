@@ -1,5 +1,10 @@
-var request = require('request');
 var RSVP = require('rsvp');
+var userAgent = 'request';
+var request = require('request').defaults({
+  headers: {
+    'User-Agent': userAgent
+  }
+});
 
 /**
  * Make an HTTP GET request.
@@ -41,5 +46,6 @@ function getJSON(url) {
 
 module.exports = {
   get: get,
-  getJSON: getJSON
+  getJSON: getJSON,
+  request: request
 };

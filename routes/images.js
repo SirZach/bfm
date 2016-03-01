@@ -1,7 +1,6 @@
 var path = require('path');
 
 var express = require('express');
-var request = require('request');
 var httpClient = require('../utils/http-client');
 
 var BASE_QUERY_URL = 'http://magiccards.info/query?q=%21';
@@ -26,7 +25,7 @@ module.exports = function (app) {
         if (!src) {
           res.sendFile(DEFAULT_CARD_PATH);
         } else {
-          request(src).pipe(res);
+          httpClient.request(src).pipe(res);
         }
       },
       function (err) {
